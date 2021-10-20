@@ -55,22 +55,22 @@ const productAll = async (req, res) => {
 
 // get a specific product
 const productID = async (req, res) => {
-    const user = await Product.findById(req.params.id)
-    console.log(user)
-    return res.status(200).json(user)
+    const product = await Product.findById(req.params.id)
+    console.log(product)
+    return res.status(200).json(product)
 }
 
 // get a product by their product type
 const productByType = async (req, res) => {
-    const user = await User.findMany({productType: req.body.productType})
-
-    return res.status(200).json(user)
+    console.log(req.body.productType)
+    const product = await Product.find({productType: req.body.productType})
+    return res.status(200).json(product)
 }
 
 // get products by their product brand
 const productByBrand = async (req, res) => {
-    const user = await User.findMany({productBrand: req.body.productBrand})
-    return res.status(200).json(user)
+    const product = await Product.find({productBrand: req.body.productBrand})
+    return res.status(200).json(product)
 }
 
 
