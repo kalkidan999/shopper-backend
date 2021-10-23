@@ -93,11 +93,25 @@ const productByBrand = async (req, res) => {
 }
 
 
+// delete a product
+const productDelete = async (req, res) => {
+    if (!req.params.id || req.params.id === "") {
+        return res.status(400).json({ error: "undefined request" })
+    }
+    const product = await Product.deleteOne(req.params.id, (err) => {
+        console.log(err)
+    })
+    console.log(product)
+}
+
+// 
+
 
 module.exports = {
     productCreate,
     productAll,
     productID,
     productByType,
-    productByBrand
+    productByBrand,
+    productDelete
 };

@@ -5,7 +5,7 @@ const user_controller = require('../controller/user_controller')
 const router = express.Router();
 
 // create or register user
-router.post('/register', user_controller.userPost);
+router.post('/', user_controller.userPost);
 
 // login user
 router.post('/login', user_controller.userLogin);
@@ -21,10 +21,6 @@ router.put('/:id', user_controller.userUpdate);
 
 // delete a spaecific user
 router.delete('/:id', user_controller.userDelete);
-
-
-
-
 
 
 module.exports = router;
