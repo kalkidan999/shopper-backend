@@ -13,22 +13,22 @@ const productCreate = async (req, res) => {
     if (!price || price === "") {
         return res.status(400).json({ error: "Invalid price input" })
     }
-    if (!pictureUrl || pictureUrl === "") {
-        return res.status(400).json({ error: "Invalid pictureUrl input" })
-    }
+    // if (!pictureUrl || pictureUrl === "") {
+    //     return res.status(400).json({ error: "Invalid pictureUrl input" })
+    // }
     if (!productType || productType === "") {
         return res.status(400).json({ error: "Invalid productType input" })
     }
     if (!productBrand || productBrand === "") {
         return res.status(400).json({ error: "Invalid productBrand  input" })
     }
-
+    const image = req.file.destination + '/' + req.file.filename
     try {
         const addProduct = await Product.create({
             name: name,
             description,
             price,
-            pictureUrl,
+            pictureUrl: image,
             productType,
             productBrand
         })

@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
         req.user = decoded;
         console.log(decoded)
     } catch (err) {
-        return res.status(401).send("Invalid login attempt");
+        return res.status(401).send(" Unauthorized login attempt ");
     }
     return next();
 };

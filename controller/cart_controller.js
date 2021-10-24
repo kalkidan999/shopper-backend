@@ -1,5 +1,4 @@
 const Cart = require('../models/cart_model')
-const User = require('../models/user_model')
 const Product = require('../models/product_model')
 
 
