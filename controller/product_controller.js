@@ -1,5 +1,7 @@
 const Product = require('../models/product_model')
 const appError = require('../utility/appError')
+const path = require('path')
+
 
 
 // add products
@@ -24,7 +26,7 @@ const productCreate = async (req, res) => {
     if (!productBrand || productBrand === "") {
         next(new appError(400, "Invalid productBrand  input"))
     }
-    const image = req.file.destination + '/' + req.file.filename
+    const image = '/api/products/image/' + req.file.filename
     try {
         const addProduct = await Product.create({
             name: name,
@@ -109,11 +111,20 @@ const productDelete = async (req, res) => {
     console.log(product)
 }
 
+// get picture of the product
+const productImage = (req, res) => {
+    const { filename } = req.params;
+    const dirname = path.resolve();
+    const fullfilepath = path.join(dirname, 'uploads/images/' + filename);
+    return res.sendFile(fullfilepath);
+}
+
 module.exports = {
     productCreate,
     productAll,
     productID,
     productByType,
     productByBrand,
-    productDelete
+    productDelete,
+    productImage
 };

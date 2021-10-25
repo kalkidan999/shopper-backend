@@ -17,6 +17,9 @@ router.get('/brand', product_controller.productByBrand)
 // get products by product type
 router.get('/type', product_controller.productByType)
 
+// Image Get Routes
+router.get('/image/:filename', product_controller.productImage);
+
 // get products by id
 router.get('/:id', product_controller.productID)
 

@@ -4,6 +4,7 @@ const user_route = require('./route/user_route')
 const product_router = require('./route/product_route')
 const cart_router = require('./route/carts_route')
 const appError = require('./utility/appError')
+const path = require('path')
 const error_handler = require('./controller/error_handler')
 
 
@@ -29,13 +30,13 @@ app.use('/api/products', product_router);
 app.use('/api/carts', cart_router);
 
 //handle all exceptions
-app.all('*', (req, res, next) =>{
-    // const error = new Error(`unkown path ${req.originalUrl} can't find it`);
-    // error.statusCode = 404
-    // error.status = "fail"
-    const error = new appError(404, `${req.originalUrl} can't find it`)
-    next(error);
-})
+// app.all('*', (req, res, next) =>{
+//     // const error = new Error(`unkown path ${req.originalUrl} can't find it`);
+//     // error.statusCode = 404
+//     // error.status = "fail"
+//     const error = new appError(404, `${req.originalUrl} can't find it`)
+//     next(error);
+// })
 
 //error handling
 app.use(error_handler)
