@@ -1,9 +1,10 @@
 const multer = require('multer')
 const path = require('path')
+const appError = require('../utility/appError')
 
 // define image storage and filename
 const imageStorage = multer.diskStorage({
-    destination: '/uploads/images',
+    destination: './uploads/images',
     filename: (req, file, cb) => {
         cb(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname))
     }
@@ -14,15 +15,14 @@ const imageUpload = multer({
     storage: imageStorage,
     limits: {
         fileSize: 1024 * 1024 * 10 // = 10 MB
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+            // upload only png and jpg format
+            return cb(new appError(401, 'Please upload a Image'))
+        }
+        cb(null, true)
     }
-    // fileFilter(req, file, cb) {
-    //     if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
-    //         // upload only png and jpg format
-    //         return cb(new Error('Please upload a Image'))
-    //     }
-    //     cb(null, true)
-    //     console.log("\n\n\n\\")
-    // }
 })
 // .single('image')
 

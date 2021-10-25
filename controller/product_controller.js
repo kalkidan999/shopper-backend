@@ -31,8 +31,10 @@ const productCreate = async (req, res) => {
             pictureUrl: image,
             productType,
             productBrand
+        }).catch((err) =>{
+            console.log(err)
         })
-        return res.status(200).json({ status: "successfully added to database" })
+        return res.status(200).json({ status: "successfully added to database", result: addProduct })
     } catch (err) {
         console.log(err)
         return res.status(400).json({ error: "error when saving to database" })
