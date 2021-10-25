@@ -1,6 +1,8 @@
 const User = require('../models/user_model')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const appError = require('../utility/appError')
+
 const JWT_TOKEN = "234567890HGfdscvbnloi*&^%$edfvbnkloiUYTRFDE345678IKJHGFDCVBNUy^t%re#dcfvghjkmnbfre$%^&*&^trfvbnjkiuY765WDFGHUIOLKJHGTREWDFGHJKJHGT"
 
 
@@ -150,7 +152,7 @@ const userDelete = async (req, res) => {
         user.save()
         return res.status(200).json({ status: "user successfully deleted" })
     }
-    return res.status(400).send({ error: "user not found" })
+    next(new appError(401, "user not found" ))
 }
 
 module.exports = {

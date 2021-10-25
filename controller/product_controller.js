@@ -1,4 +1,6 @@
 const Product = require('../models/product_model')
+const appError = require('../utility/appError')
+
 
 // add products
 const productCreate = async (req, res) => {
@@ -106,9 +108,6 @@ const productDelete = async (req, res) => {
     })
     console.log(product)
 }
-
-// 
-
 
 module.exports = {
     productCreate,

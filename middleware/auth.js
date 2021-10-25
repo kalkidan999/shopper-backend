@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const appError = require('../utility/appError')
 
 const JWT_TOKEN = "234567890HGfdscvbnloi*&^%$edfvbnkloiUYTRFDE345678IKJHGFDCVBNUy^t%re#dcfvghjkmnbfre$%^&*&^trfvbnjkiuY765WDFGHUIOLKJHGTREWDFGHJKJHGT"
 
@@ -8,7 +9,6 @@ const verifyToken = (req, res, next) => {
     if (!token) {
         next(new appError(403, "A token is required for authentication" ))
     }
-
     try {
         const decoded = jwt.verify(token, JWT_TOKEN);
         req.user = decoded;
