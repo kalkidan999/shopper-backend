@@ -13,18 +13,18 @@ const userPost = async (req, res) => {
     // checking for empty inputs
     if (fname === "" || lname === "" || email === "" || password === "" ||
         !fname || !lname || !email || !password) {
-        return res.status(400).send({ error: 'empty field found, please fill all required fields' })
+        next(new appError(400, 'empty field found, please fill all required fields'))
     }
 
     // check for password length
     if (password.length < 8) {
-        return res.status(400).send({ error: 'password length must be greater than seven' })
+        next(new appError(400, 'password length must be greater than seven'))
     }
 
     // checks if the email already exists in the database (partially working)
     const emailExists = await User.findOne({ email: email });
     if (emailExists) {
-        return res.status(400).send({ error: 'This email already exists in the database !!!' });
+        next(new appError(400, 'This email already exists in the database !!!'))
     }
 
     // hashing the password
@@ -49,6 +49,7 @@ const userPost = async (req, res) => {
     } catch (err) {
         // catching any error when saving data
         console.log(JSON.stringify(err));
+        next(new appError(400, 'could not save to the database'))
     }
 
 
@@ -64,27 +65,27 @@ const userPost = async (req, res) => {
 const userLogin = async (req, res) => {
     const { email, password } = req.body;
     if (!email || email == "") {
-        return res.status(400).json({error: "email is undefined"})
+        next(new appError(400, "email is undefined"))
     }
     if (!password || password == "") {
-        return res.status(400).json({erro: "password is undefined"})
+        next(new appError(400, "password is undefined"))
     }
 
-    const user = await User.findOne({email}).lean()
+    const user = await User.findOne({ email }).lean()
         .catch((err) => {
-            console.log(err)
+            next(new appError(401, "user haven't registered"))
         })
     if (user && (await bcrypt.compare(password, user.hashed_password))) {
-        const token = jwt.sign (
-            {id: user._id, email},
+        const token = jwt.sign(
+            { id: user._id, email },
             JWT_TOKEN,
             {
                 expiresIn: "2h"
             }
         );
-        return res.status(200).json({status: "OK", token: token});
+        return res.status(200).json({ status: "OK", token: token });
     }
-    return res.status(400).json({status: "failed", Error: "please insert correct username or password"})
+    next(new appError(401, "please insert correct username or password"))
 }
 
 
@@ -116,15 +117,11 @@ const userUpdate = async (req, res) => {
         if (password !== "" && password) {
 
             if (password.length < 8) {
-                return res.status(400).send({ error: 'password length must be greater than seven' })
+                next(new appError(401, 'password length must be greater than seven'))
             }
-
             hashed_password = await bcrypt.hash(password, 10)
         }
-
-
         const user = await User.findById(req.params.id) ?? await User.findOne({ email: req.body.id })
-
         if (user) {
             if (fname !== "" && fname) {
                 user.fname = fname
@@ -140,11 +137,9 @@ const userUpdate = async (req, res) => {
             }
             user.save()
             return res.status(200).json(user)
-
         }
     }
-    return res.status(400).json({ error: "user not found" })
-
+    next(new appError(401, "user not found" ))
 }
 
 // delete a user
@@ -153,7 +148,7 @@ const userDelete = async (req, res) => {
     if (user) {
         user.delete()
         user.save()
-        return res.status(200).json({status: "user successfully deleted"})
+        return res.status(200).json({ status: "user successfully deleted" })
     }
     return res.status(400).send({ error: "user not found" })
 }

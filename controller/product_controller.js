@@ -5,22 +5,22 @@ const productCreate = async (req, res) => {
     const { name, description, price, pictureUrl, productType, productBrand } = req.body
 
     if (!name || name === "") {
-        return res.status(400).json({ error: "Invalid Item input" })
+        next(new appError(400, "Invalid Item input"))
     }
     if (!description || description === "") {
-        return res.status(400).json({ error: "Invalid Description  input" })
+        next(new appError(400, "Invalid Description  input"))
     }
     if (!price || price === "") {
-        return res.status(400).json({ error: "Invalid price input" })
+        next(new appError(400, "Invalid price input"))
     }
     // if (!pictureUrl || pictureUrl === "") {
     //     return res.status(400).json({ error: "Invalid pictureUrl input" })
     // }
     if (!productType || productType === "") {
-        return res.status(400).json({ error: "Invalid productType input" })
+        next(new appError(400, "Invalid productType input"))
     }
     if (!productBrand || productBrand === "") {
-        return res.status(400).json({ error: "Invalid productBrand  input" })
+        next(new appError(400, "Invalid productBrand  input"))
     }
     const image = req.file.destination + '/' + req.file.filename
     try {
@@ -31,13 +31,13 @@ const productCreate = async (req, res) => {
             pictureUrl: image,
             productType,
             productBrand
-        }).catch((err) =>{
+        }).catch((err) => {
             console.log(err)
         })
         return res.status(200).json({ status: "successfully added to database", result: addProduct })
     } catch (err) {
         console.log(err)
-        return res.status(400).json({ error: "error when saving to database" })
+        next(new appError(400, "error when saving to database"))
     }
 }
 
@@ -59,13 +59,13 @@ const productAll = async (req, res) => {
 // get a specific product
 const productID = async (req, res) => {
     if (!req.params.id || req.params.id === "") {
-        return res.status(400).json({ error: "undefined request" })
+        next(new appError(400, "undefined request"))
     }
     const product = await Product.findById(req.params.id)       // search for the product by Id
     if (product) {
         return res.status(200).json(product)                    // return the json format of the product
     }
-    return res.status(400).json({ error: "the product was not found" })
+    next(new appError(400, "the product was not found"))
 }
 
 // get a product by their product type
@@ -78,7 +78,8 @@ const productByType = async (req, res) => {
     if (product) {
         return res.status(200).json(product)    // return the json format of list of products
     }
-    return res.status(400).json({ error: "The Brand of the product is not found" })
+    next(new appError(400, "The Brand of the product is not found"))
+
 }
 
 // get products by their product brand
@@ -91,14 +92,14 @@ const productByBrand = async (req, res) => {
     if (product) {
         return res.status(200).json(product)    // return the json format of list of products
     }
-    return res.status(400).json({ error: "The Type of product is not found" })
+    next(new appError(400, "The Type of product is not found"))
 }
 
 
 // delete a product
 const productDelete = async (req, res) => {
     if (!req.params.id || req.params.id === "") {
-        return res.status(400).json({ error: "undefined request" })
+        next(new appError(400, "undefined request"))
     }
     const product = await Product.deleteOne(req.params.id, (err) => {
         console.log(err)
