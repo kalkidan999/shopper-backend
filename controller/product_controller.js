@@ -1,30 +1,50 @@
 const Product = require('../models/product_model')
 const appError = require('../utility/appError')
 const path = require('path')
-
+const fs = require('fs')
 
 
 // add products
-const productCreate = async (req, res) => {
+const productCreate = async (req, res, next) => {
     const { name, description, price, pictureUrl, productType, productBrand } = req.body
 
     if (!name || name === "") {
-        next(new appError(400, "Invalid Item input"))
+        fs.unlink('./uploads/images/' + req.file.filename, (err) => {
+            if(err) console.log("name", err)
+            console.log("file deleted successfully")
+        })
+        return next(new appError(400, "Invalid Item input"))
     }
     if (!description || description === "") {
-        next(new appError(400, "Invalid Description  input"))
+        fs.unlink('./uploads/images/' + req.file.filename, (err) => {
+            if(err) console.log(err)
+            console.log("file deleted successfully")
+        })
+        return next(new appError(400, "Invalid Description  input"))
     }
     if (!price || price === "") {
-        next(new appError(400, "Invalid price input"))
+        fs.unlink('./uploads/images/' + req.file.filename, (err) => {
+            if(err) console.log(err)
+            console.log("file deleted successfully")
+        })
+        return next(new appError(400, "Invalid price input"))
     }
     // if (!pictureUrl || pictureUrl === "") {
     //     return res.status(400).json({ error: "Invalid pictureUrl input" })
     // }
     if (!productType || productType === "") {
-        next(new appError(400, "Invalid productType input"))
+        fs.unlink('./uploads/images/' + req.file.filename, (err) => {
+            if(err) console.log(err)
+            console.log("file deleted successfully")
+        })
+        return next(new appError(400, "Invalid productType input"))
     }
     if (!productBrand || productBrand === "") {
-        next(new appError(400, "Invalid productBrand  input"))
+        fs.unlink('./uploads/images/' + req.file.filename, (err) => {
+            if(err) console.log(err)
+            console.log("file deleted successfully")
+        })
+        return next(new appError(400, "Invalid productBrand  input"))
     }
     const image = '/api/products/image/' + req.file.filename
     try {
@@ -41,7 +61,7 @@ const productCreate = async (req, res) => {
         return res.status(200).json({ status: "successfully added to database", result: addProduct })
     } catch (err) {
         console.log(err)
-        next(new appError(400, "error when saving to database"))
+        return next(new appError(400, "error when saving to database"))
     }
 }
 

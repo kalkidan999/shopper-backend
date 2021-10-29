@@ -3,10 +3,11 @@ const router = express.Router()
 const product_controller = require('../controller/product_controller')
 const product_pagination = require('../middleware/product_pagination')
 const upload_image = require('../middleware/upload_image')
+const product_validation = require('../middleware/product_validation')
 const fs = require('fs')
 
 // Add a product
-router.post('/', upload_image.imageUpload.single('image'), product_controller.productCreate)
+router.post('/',upload_image.imageUpload.single('image'), product_controller.productCreate)
 
 // get all products
 router.get('/', product_pagination.product_pagination, product_controller.productAll)
