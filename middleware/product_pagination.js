@@ -24,8 +24,8 @@ const product_pagination = async (req, res, next) => {
         sorts['orderBy'] = req.query.OrderBy === 'desc' || req.query.orderBy === "-1" ? -1 : 1
         console.log("OrderBy: ", sorts.orderBy)
     } else {
-        sorts['sortBy'] = req.query.sort
-        sorts['orderBy'] = 1 
+        sorts['sortBy'] = req.query.sort ? req.query.sort : "name"
+        sorts['orderBy'] = 1
     }
 
 
@@ -40,7 +40,7 @@ const product_pagination = async (req, res, next) => {
     }
     else {
         limit = 6
-        page = parseInt(req.query.pageIndex)
+        page = req.query.page ?  parseInt(req.query.page) : 1
     }
     if (limit && page) {
         const startIndex = (page - 1) * limit;
@@ -48,8 +48,6 @@ const product_pagination = async (req, res, next) => {
         const total = await Product.countDocuments().exec();
 
         const result = {};
-
-        result.totalCounts = total
         result.pageNumber = page
         result.pageSize = Math.ceil(total / limit)
         console.log("limit: ", limit, " page: ", page)
@@ -81,6 +79,7 @@ const product_pagination = async (req, res, next) => {
                 productBrand: match.productBrand ? match.productBrand : new RegExp(/.*/),
                 //$text: match.search ? match.search : { $search: new RegExp(/.*/) }
             }).skip(startIndex).limit(limit).sort([[`${sorts.sortBy}`, sorts.orderBy]])
+            result.totalCounts = result.data.length
             res.paginatedResult = result
             next();
 

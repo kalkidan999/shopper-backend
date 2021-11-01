@@ -10,21 +10,21 @@ const productCreate = async (req, res, next) => {
 
     if (!name || name === "") {
         fs.unlink('./uploads/images/' + req.file.filename, (err) => {
-            if(err) console.log("name", err)
+            if (err) console.log("name", err)
             console.log("file deleted successfully")
         })
         return next(new appError(400, "Invalid Item input"))
     }
     if (!description || description === "") {
         fs.unlink('./uploads/images/' + req.file.filename, (err) => {
-            if(err) console.log(err)
+            if (err) console.log(err)
             console.log("file deleted successfully")
         })
         return next(new appError(400, "Invalid Description  input"))
     }
     if (!price || price === "") {
         fs.unlink('./uploads/images/' + req.file.filename, (err) => {
-            if(err) console.log(err)
+            if (err) console.log(err)
             console.log("file deleted successfully")
         })
         return next(new appError(400, "Invalid price input"))
@@ -34,14 +34,14 @@ const productCreate = async (req, res, next) => {
     // }
     if (!productType || productType === "") {
         fs.unlink('./uploads/images/' + req.file.filename, (err) => {
-            if(err) console.log(err)
+            if (err) console.log(err)
             console.log("file deleted successfully")
         })
         return next(new appError(400, "Invalid productType input"))
     }
     if (!productBrand || productBrand === "") {
         fs.unlink('./uploads/images/' + req.file.filename, (err) => {
-            if(err) console.log(err)
+            if (err) console.log(err)
             console.log("file deleted successfully")
         })
         return next(new appError(400, "Invalid productBrand  input"))
@@ -96,11 +96,15 @@ const productID = async (req, res) => {
 const productByType = async (req, res) => {
     if (!req.body.productType || req.body.productType === "") {
         const product = await Product.find()
+        return res.status(200).json(["T-shirt","Shoe"])
         return res.status(200).json(product)
     }
-    const product = await Product.find({ productType: req.body.productType }) // search for the product by Type
+    // const product = await Product.find({ productType: req.body.productType }) // search for the product by Type
+    const product = await Product.find({}, 'productType _id').select()
+        .distinct('productType', (err) => console.log(err)) // returns all types of products
+    console.log(product)
     if (product) {
-        return res.status(200).json(product)    // return the json format of list of products
+        return res.status(200).json([{productType: "T-shirt", productType: "Shoe"}])    // return the json format of list of products
     }
     next(new appError(400, "The Brand of the product is not found"))
 
@@ -110,7 +114,9 @@ const productByType = async (req, res) => {
 const productByBrand = async (req, res) => {
     if (!req.body.productBrand || req.body.productBrand === "") {
         const product = await Product.find()
+        return res.status(200).json(["dsaf", "asdfad"])
         return res.status(200).json(product)
+
     }
     const product = await Product.find({ productBrand: req.body.productBrand }) // search for the product by brand
     if (product) {

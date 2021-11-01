@@ -24,7 +24,9 @@ mongoose.connect("mongodb://localhost:27017/shopper").then(() => {
 });
 
 
-
+app.get('/', () => {
+    return res.send("HI Connected successfully")
+})
 app.use('/api/users', user_route);
 app.use('/api/products', product_router);
 app.use('/api/carts', cart_router);
