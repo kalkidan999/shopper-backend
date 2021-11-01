@@ -6,12 +6,57 @@ const cart_router = require('./route/carts_route')
 const appError = require('./utility/appError')
 const error_handler = require('./controller/error_handler')
 const path = require('path')
+const cors = require('cors')
 
 
 const app = express();
 
 
 //console.log(PATH_MAIN)
+
+
+
+var corsOptions = {
+  origin: '*',
+  //Access-Control-Allow-Origin: *,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+
+
+// app.use(function(req, res, next) {
+//    res.header("Access-Control-Allow-Origin", "*");
+//    res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
+//    //res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//    if ('OPTIONS' == req.method) {
+//       res.sendStatus(200);
+//     }
+//     else {
+//       next();
+//     }});
+
+app.use(cors());
+
+// Add headers before the routes are defined
+// app.use(function (req, res, next) {
+
+//     // Website you wish to allow to connect
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+
+//     // Request methods you wish to allow
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+//     // Request headers you wish to allow
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+//     // Set to true if you need the website to include cookies in the requests sent
+//     // to the API (e.g. in case you use sessions)
+//     res.setHeader('Access-Control-Allow-Credentials', false);
+
+//     // Pass to next layer of middleware
+//     next();
+// });
+//
 
 
 app.use(express.json());
@@ -24,12 +69,13 @@ mongoose.connect("mongodb://localhost:27017/shopper").then(() => {
 });
 
 
-app.get('/', () => {
+app.get('/', (req, res) => {
     return res.send("HI Connected successfully")
 })
-app.use('/api/users', user_route);
 app.use('/api/products', product_router);
 app.use('/api/carts', cart_router);
+app.use('/api/users', user_route);
+
 
 
 

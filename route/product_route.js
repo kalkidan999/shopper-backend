@@ -13,10 +13,10 @@ router.post('/',upload_image.imageUpload.single('image'), product_controller.pro
 router.get('/', product_pagination.product_pagination, product_controller.productAll)
 
 // get products by product brand
-router.get('/brand', product_controller.productByBrand)
+router.get('/brands', product_controller.productByBrand)
 
 // get products by product type
-router.get('/type', product_controller.productByType)
+router.get('/types', product_controller.productByType)
 
 // Image Get Routes
 router.get('/image/:filename', product_controller.productImage);

@@ -67,7 +67,26 @@ const productCreate = async (req, res, next) => {
 
 // get all the products
 const productAll = async (req, res) => {
-    return res.status(200).json(res.paginatedResult)
+    //return res.status(200).json(res.paginatedResult)
+    res.contentType("application/json")
+    res.Acc
+    return res.status(200)
+    .json({
+        pageIndex: 1,
+        pageSize: 6,
+        count: 1,
+        data: [
+            {
+                id: 1,
+                name: "shoe",
+                description: "very nice",
+                price: 1000,
+                pictureUrl: "https://localhost:4200/assets/images/slider1.jpg",
+                productType: "shoes",
+                productBrand: "Adidas"
+            }
+        ]
+    })
     // try {
     //     const product = {
     //         "total_products": await Product.find().count(),     // get count of all products and all the products
@@ -96,7 +115,7 @@ const productID = async (req, res) => {
 const productByType = async (req, res) => {
     if (!req.body.productType || req.body.productType === "") {
         const product = await Product.find()
-        return res.status(200).json(["T-shirt","Shoe"])
+        return res.status(200).json([{id: 2, type: "T-shirt"},{id: 1, type: "Shoe"}])
         return res.status(200).json(product)
     }
     // const product = await Product.find({ productType: req.body.productType }) // search for the product by Type

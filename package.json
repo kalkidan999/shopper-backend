@@ -24,5 +24,8 @@
   },
   "jest": {
     "testEnvironment": "node"
+  },
+  "dependencies": {
+    "cors": "^2.8.5"
   }
 }
