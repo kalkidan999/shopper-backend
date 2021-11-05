@@ -1,17 +1,16 @@
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 
-const OrderModel = mongoose.Schema({
-    userID,
-    paymentID,
-    paymentStatus,
-    orderAt,
-    currency,
-    items,
-    shippingStatus,
-    shippingAddress
-}, 'orders');
+// const OrderModel = mongoose.Schema({
+//     userID,
+//     paymentID,
+//     paymentStatus,
+//     orderAt,
+//     currency,
+//     items,
+//     shippingStatus,
+//     shippingAddress
+// }, 'orders');
 
-const order_model = mongoose.model('OrderModel', OrderModel)
+// const order_model = mongoose.model('OrderModel', OrderModel)
 
-module.exports = order_model
-
+// module.exports = order_model

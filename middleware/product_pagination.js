@@ -1,32 +1,51 @@
 const Product = require('../models/product_model')
+const ProductsType = require('../models/productType_model')
+const ProductsBrand = require('../models/productBrand_model')
 
 const product_pagination = async (req, res, next) => {
     let page, limit;
     const match = {}
     const sorts = {}
-    //console.log('hiiii: ', req.query.productType, req.query.productBrand, req.query.search)
-    if (req.query.productType && req.query.productType !== "") {
-        console.log('product type')
-        match.productType = req.query.productType
+
+    // validating for request parameters
+    if (req.query.typeId && req.query.typeId !== "") {
+        // console.log('product type')
+        const type = await ProductsType.findOne({id: req.query.typeId})
+        match.productType = type.name
     }
-    console.log(req.query.productBrand)
-    if (req.query.productBrand && req.query.productBrand !== "") {
-        match.productBrand = req.query.productBrand
-        console.log(`product Brand: ${match.productBrand}`)
+    if (req.query.brandId && req.query.brandId !== "") {
+        const brand = await ProductsBrand.findOne({id: req.query.brandId})
+        match.productBrand = brand.name
+        // console.log(`product Brand: ${match.productBrand}`)
     }
     if (req.query.search && req.query.search !== "") {
-        console.log('searching----', req.query.search)
-        match.search = { $search: new RegExp(req.query.search, 'i') }
+        console.log('searching by name: ', req.query.search)
+        match.search =  req.query.search
     }
-    if (req.query.sortBy || req.query.orderBy) {
-        console.log("sorts aman sdf ", req.query.sortBy)
-        sorts['sortBy'] = req.query.sortBy
-        sorts['orderBy'] = req.query.OrderBy === 'desc' || req.query.orderBy === "-1" ? -1 : 1
-        console.log("OrderBy: ", sorts.orderBy)
-    } else {
-        sorts['sortBy'] = req.query.sort ? req.query.sort : "name"
+
+
+    if (req.query.sort === 'priceAsc') {
+        sorts['sortBy'] = 'price'
         sorts['orderBy'] = 1
     }
+    else if (req.query.sort === 'priceDesc') {
+        sorts['sortBy'] = 'price'
+        sorts['orderBy'] = -1
+    }
+    else {
+        sorts['sortBy'] = 'name'
+        sorts['orderBy'] = 1
+    }
+    // sort with every colomon very flexeble
+    // if (req.query.sortBy || req.query.orderBy) {
+    //     console.log("sorts aman sdf ", req.query.sortBy)
+    //     sorts['sortBy'] = req.query.sortBy
+    //     sorts['orderBy'] = req.query.OrderBy === 'desc' || req.query.orderBy === "-1" ? -1 : 1
+    //     console.log("OrderBy: ", sorts.orderBy)
+    // } else {
+    //     sorts['sortBy'] = req.query.sort ? req.query.sort : "name"
+    //     sorts['orderBy'] = 1
+    // }
 
 
 
@@ -48,8 +67,9 @@ const product_pagination = async (req, res, next) => {
         const total = await Product.countDocuments().exec();
 
         const result = {};
-        result.pageNumber = page
-        result.pageSize = Math.ceil(total / limit)
+        result.pageIndex = page
+        result.pageSize = limit
+        result.count = total
         console.log("limit: ", limit, " page: ", page)
 
         // To define next and previvous page
@@ -70,6 +90,7 @@ const product_pagination = async (req, res, next) => {
         console.log("sortBy: ", sorts.sortBy)
         console.log("b", result)
 
+        // filter the data
         try {
             console.log(result)
             console.log(`match: ${match.productBrand}`)
@@ -77,22 +98,10 @@ const product_pagination = async (req, res, next) => {
             result.data = await Product.find({
                 productType: (match.productType) ? match.productType : new RegExp(/.*/),
                 productBrand: match.productBrand ? match.productBrand : new RegExp(/.*/),
-                //$text: match.search ? match.search : { $search: new RegExp(/.*/) }
-            }).skip(startIndex).limit(limit).sort([[`${sorts.sortBy}`, sorts.orderBy]])
-            result.totalCounts = result.data.length
+                name: match.search ? { "$regex": match.search, "$options": "i" } : new RegExp(/.*/)
+            }, ['id','name', 'description', 'price', 'pictureUrl', 'productType', 'productBrand', '-_id']).skip(startIndex).limit(limit).sort([[`${sorts.sortBy}`, sorts.orderBy]])
             res.paginatedResult = result
             next();
-
-            // await req.results.populate({
-            //     path: 'productschemas',
-            //     match,
-            //     options: {
-            //         limit: parseInt(req.query.limit),
-            //         skip: parseInt(req.query.skip),
-            //         sort
-            //     }
-            // }).execPopulate()
-            // res.send(req.user.products)
         } catch (error) {
             console.log(error)
             return res.status(500).json({ error: error.message })

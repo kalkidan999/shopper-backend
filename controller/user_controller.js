@@ -7,7 +7,7 @@ const JWT_TOKEN = "234567890HGfdscvbnloi*&^%$edfvbnkloiUYTRFDE345678IKJHGFDCVBNU
 
 
 // Create User
-const userPost = async (req, res) => {
+const userPost = async(req, res) => {
     //console.log(req.body)
     const { fname, lname, bdate, email, password, } = req.body
     let hashed_password;
@@ -36,7 +36,7 @@ const userPost = async (req, res) => {
     console.log('password: ', password);
     console.log('hashed pass: ', hashed_password)
     console.log(req.body)
-    //const address = { country: 'Ethiopia', city: 'Addis ababa', }
+        //const address = { country: 'Ethiopia', city: 'Addis ababa', }
     try {
         // saving to database
         const createResponse = await User.create({
@@ -58,13 +58,16 @@ const userPost = async (req, res) => {
     return res.json({
         status: "successfully registered",
         registered: {
-            fname, lname, bdate, email
+            fname,
+            lname,
+            bdate,
+            email
         }
     })
 }
 
 //login user
-const userLogin = async (req, res) => {
+const userLogin = async(req, res, next) => {
     const { email, password } = req.body;
     if (!email || email == "") {
         next(new appError(400, "email is undefined"))
@@ -78,21 +81,20 @@ const userLogin = async (req, res) => {
             next(new appError(401, "user haven't registered"))
         })
     if (user && (await bcrypt.compare(password, user.hashed_password))) {
-        const token = jwt.sign(
-            { id: user._id, email },
-            JWT_TOKEN,
-            {
+        const token = jwt.sign({ id: user._id, email },
+            JWT_TOKEN, {
                 expiresIn: "2h"
             }
         );
         return res.status(200).json({ status: "OK", token: token });
     }
+    return res.status(401).json({ status: "Fail", message: "please insert correct username or password" })
     next(new appError(401, "please insert correct username or password"))
 }
 
 
 // gets all the users
-const userAll = async (req, res) => {
+const userAll = async(req, res) => {
     const users = {
         'numeber_of_data': await User.find().count(),
         'Regesterd_users': await User.find()
@@ -102,14 +104,14 @@ const userAll = async (req, res) => {
 }
 
 // get a specific user
-const userID = async (req, res) => {
+const userID = async(req, res) => {
     const user = await User.findById(req.params.id)
     return res.status(200).json(user)
 }
 
 
 // update a user
-const userUpdate = async (req, res) => {
+const userUpdate = async(req, res) => {
     const user = await User.findById(req.params.id)
     console.log(user);
     if (user) {
@@ -123,7 +125,7 @@ const userUpdate = async (req, res) => {
             }
             hashed_password = await bcrypt.hash(password, 10)
         }
-        const user = await User.findById(req.params.id) ?? await User.findOne({ email: req.body.id })
+        const user = await User.findById(req.params.id) //?? await User.findOne({ email: req.body.id })
         if (user) {
             if (fname !== "" && fname) {
                 user.fname = fname
@@ -141,18 +143,18 @@ const userUpdate = async (req, res) => {
             return res.status(200).json(user)
         }
     }
-    next(new appError(401, "user not found" ))
+    next(new appError(401, "user not found"))
 }
 
 // delete a user
-const userDelete = async (req, res) => {
+const userDelete = async(req, res) => {
     const user = await User.findById(req.params.id)
     if (user) {
         user.delete()
         user.save()
         return res.status(200).json({ status: "user successfully deleted" })
     }
-    next(new appError(401, "user not found" ))
+    next(new appError(401, "user not found"))
 }
 
 module.exports = {
@@ -163,5 +165,3 @@ module.exports = {
     userDelete,
     userLogin
 }
-
-

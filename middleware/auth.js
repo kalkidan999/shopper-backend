@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
         req.user = decoded;
         console.log(decoded)
     } catch (err) {
-        next(new appError(401, " Unauthorized login attempt " ))
+        next(new appError(401, " Unauthorized user please login first " ))
     }
     return next();
 };

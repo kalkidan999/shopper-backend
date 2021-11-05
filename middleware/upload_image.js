@@ -1,5 +1,6 @@
 const multer = require('multer')
 const path = require('path')
+const GridFsStorage = require('multer-gridfs-storage');
 const appError = require('../utility/appError')
 
 // define image storage and filename
@@ -10,21 +11,51 @@ const imageStorage = multer.diskStorage({
     }
 })
 
+// // Init gfs
+// let gfs;
+
+// // conn.once('open', () => {
+// //     // Init stream
+// //     gfs = Grid(conn.db, mongoose.mongo);
+// //     gfs.collection('uploads');
+// // });
+
+// const DB_URL = process.env.DB_URL
+// const storage = GridFsStorage({
+//     url: DB_URL,
+//     file: (req, file) => {
+//         return new Promise((resolve, reject) => {
+//             crypto.randomBytes(16, (err, buf) => {
+//                 if (err) {
+//                     return reject(err);
+//                 }
+//                 const filename = file.fieldname + '_' + Date.now() + path.extname(file.originalname);
+//                 const fileInfo = {
+//                     filename: filename,
+//                     bucketName: 'uploads'
+//                 };
+//                 resolve(fileInfo);
+//             });
+//         });
+//     }
+// });
+
 // upload the image
 const imageUpload = multer({
-    storage: imageStorage,
-    limits: {
-        fileSize: 1024 * 1024 * 10 // = 10 MB
-    },
-    fileFilter(req, file, cb) {
-        if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
-            // upload only png and jpg format
-            return cb(new appError(401, 'Please upload a Image'))
+        storage: imageStorage,
+        limits: {
+            fileSize: 1024 * 1024 * 10 // = 10 MB
+        },
+        fileFilter(req, file, cb) {
+            if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+                // upload only png and jpg format
+                return cb(new appError(401, 'Please upload a Image'))
+            }
+            console.log("image uploaded successfully")
+            cb(null, true)
         }
-        cb(null, true)
-    }
-})
-// .single('image')
+    })
+    // .single('image')
 
 // const uploadImages = (req, res, next) => {
 //     imageUpload(req, res, err => {
