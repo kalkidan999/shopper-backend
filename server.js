@@ -64,8 +64,9 @@ app.use(cors());
 
 app.use(express.json());
 const DB_URL = process.env.DB_URL
+const DATABASE_URL="mongodb://localhost:27017/Products"
 console.log(DB_URL)
-mongoose.connect(DB_URL).then(() => {
+mongoose.connect(DATABASE_URL).then(() => {
     console.log("connected to the database successfully")
 }).catch((error) => {
     console.log("erro is this ==========\n\n\n", error)
